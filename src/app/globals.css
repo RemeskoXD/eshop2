@@ -1,0 +1,231 @@
+@import "tailwindcss";
+
+:root {
+  /* Shadeon-inspired premium palette */
+  --background: #F8F6F1; /* Základní pozadí */
+  --foreground: #2B2B2B; /* Hlavní text */
+
+  /* Brand core */
+  --primary: #5D5754; /* Hlavní barva značky (nadpisy + navigace) */
+  --primary-dark: #4B4542; /* jemně tmavší varianta pro hover */
+  --secondary: #5D5754; /* hlavičková/promo lišta (kontrast pro bílý text) */
+  --accent: #CCAD8A; /* Akcent (CTA) */
+
+  /* Neutrals / surfaces */
+  --muted: #DFDAD3; /* Doplňková neutrální (rámečky/karty/podklad) */
+  --card: #ffffff;
+  --surface-soft: #F8F6F1;
+  --surface-elevated: #ffffff;
+  --strip: #F8F6F1;
+
+  /* Borders / rings / shadows */
+  --border-subtle: rgba(43, 43, 43, 0.1);
+  --border-strong: rgba(43, 43, 43, 0.18);
+  --ring-subtle: rgba(204, 173, 138, 0.35);
+  --shadow-soft: 0 6px 24px rgba(43, 43, 43, 0.08);
+  --shadow-elevated: 0 14px 40px rgba(43, 43, 43, 0.12);
+
+  /* Motion */
+  --motion-fast: 140ms;
+  --motion-normal: 220ms;
+  --motion-slow: 320ms;
+  --easing-standard: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-muted: var(--muted);
+  --color-card: var(--card);
+  --color-surface-soft: var(--surface-soft);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-strip: var(--strip);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-strong: var(--border-strong);
+  --font-sans: var(--font-geist-sans);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* Viditelný fokus pro klávesnici */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--ring-subtle);
+}
+
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible),
+summary:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+select:focus:not(:focus-visible),
+textarea:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Reusable skip-link style keeps keyboard navigation consistent */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+}
+
+.skip-link:focus-visible {
+  left: 1rem;
+  top: 1rem;
+  z-index: 200;
+  border-radius: 0.75rem;
+  background: var(--primary);
+  padding: 0.7rem 1rem;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.font-heading {
+  font-family: var(--font-heading), "Georgia", ui-serif, serif;
+}
+
+::selection {
+  background: var(--secondary);
+  color: #ffffff;
+}
+
+/* Reusable premium utility tokens */
+.ui-surface {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-soft);
+}
+
+.ui-surface-strong {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-elevated);
+}
+
+/* Typography scale */
+.ui-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.ui-display {
+  font-family: var(--font-heading), "Georgia", ui-serif, serif;
+  font-size: clamp(2.2rem, 5vw, 3.85rem);
+  line-height: 1.07;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--primary);
+}
+
+.ui-h1 {
+  font-family: var(--font-heading), "Georgia", ui-serif, serif;
+  font-size: clamp(2rem, 3.4vw, 3rem);
+  line-height: 1.12;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--primary);
+}
+
+.ui-h2 {
+  font-family: var(--font-heading), "Georgia", ui-serif, serif;
+  font-size: clamp(1.65rem, 2.8vw, 2.35rem);
+  line-height: 1.18;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  color: var(--primary);
+}
+
+.ui-h3 {
+  font-family: var(--font-heading), "Georgia", ui-serif, serif;
+  font-size: clamp(1.25rem, 2vw, 1.6rem);
+  line-height: 1.25;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.ui-body-lg {
+  font-size: clamp(1rem, 1.3vw, 1.125rem);
+  line-height: 1.65;
+  color: color-mix(in srgb, var(--foreground) 78%, white 22%);
+}
+
+.ui-body {
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--foreground) 76%, white 24%);
+}
+
+.ui-caption {
+  font-size: 0.76rem;
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--foreground) 52%, white 48%);
+}
+
+/* Motion guidelines (performance-safe transforms/opacities only) */
+.ui-motion {
+  transition-duration: var(--motion-normal);
+  transition-timing-function: var(--easing-standard);
+}
+
+.ui-hover-lift {
+  transition-property: transform, box-shadow, border-color, background-color, color, opacity;
+}
+
+.ui-hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+.ui-pressable:active {
+  transform: translateY(0);
+}
+
+.ui-fade-in {
+  animation: ui-fade-in var(--motion-slow) var(--easing-standard) both;
+}
+
+@keyframes ui-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-motion,
+  .ui-hover-lift,
+  .ui-fade-in {
+    animation: none !important;
+    transition-duration: 1ms !important;
+    transform: none !important;
+  }
+}
+
+/* Právní stránky (LegalLayout) */
+.prose-legal section h2 {
+  margin-bottom: 0.75rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.prose-legal section p,
+.prose-legal section ul {
+  margin-top: 0;
+}

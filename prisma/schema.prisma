@@ -1,0 +1,186 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Order {
+  id                 String               @id @default(cuid())
+  orderNumber        String?              @unique
+  variableSymbol     String?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  status             String               @default("new")
+  currency           String               @default("CZK")
+  currencyRate       Float?
+  totalPrice         Int
+  customerName       String
+  customerEmail      String
+  customerPhone      String
+  companyName        String?
+  ico                String?
+  dic                String?
+  street             String
+  city               String
+  postalCode         String
+  deliveryStreet     String?
+  deliveryCity       String?
+  deliveryPostalCode String?
+  deliveryCountry    String?
+  paymentMethod      String?
+  shippingMethod     String?
+  customerNote       String?
+  internalNote       String?
+  confirmedAt        DateTime?
+  cancelledAt        DateTime?
+  items              OrderItem[]
+  statusHistory      OrderStatusHistory[]
+}
+
+model OrderItem {
+  id        String            @id @default(cuid())
+  orderId   String
+  productId String?
+  name      String
+  unitPrice Int
+  quantity  Int
+  order     Order             @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product?          @relation(fields: [productId], references: [id], onDelete: SetNull)
+  configs   OrderItemConfig[]
+}
+
+model OrderItemConfig {
+  id          String    @id @default(cuid())
+  orderItemId String
+  key         String
+  value       String
+  orderItem   OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+}
+
+model OrderStatusHistory {
+  id                   String     @id @default(cuid())
+  orderId              String
+  fromStatus           String?
+  toStatus             String
+  changedAt            DateTime   @default(now())
+  changedByEmail       String?
+  changedByAdminUserId String?
+  order                Order      @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  adminUser            AdminUser? @relation(fields: [changedByAdminUserId], references: [id], onDelete: SetNull)
+}
+
+model OrderStatusType {
+  id      String  @id @default(cuid())
+  code    String  @unique
+  name    String
+  color   String?
+  isFinal Boolean @default(false)
+}
+
+model AdminUser {
+  id            String               @id @default(cuid())
+  email         String               @unique
+  passwordHash  String
+  name          String?
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  roles         AdminUserRole[]
+  statusHistory OrderStatusHistory[]
+}
+
+model AdminRole {
+  id          String          @id @default(cuid())
+  name        String          @unique
+  description String?
+  users       AdminUserRole[]
+}
+
+model AdminUserRole {
+  id          String    @id @default(cuid())
+  adminUserId String
+  adminRoleId String
+  adminUser   AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  adminRole   AdminRole @relation(fields: [adminRoleId], references: [id], onDelete: Cascade)
+
+  @@unique([adminUserId, adminRoleId])
+}
+
+model Category {
+  id          String     @id @default(cuid())
+  slug        String     @unique
+  name        String
+  description String?
+  parentId    String?
+  parent      Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  products    Product[]
+}
+
+model Product {
+  id           String               @id @default(cuid())
+  slug         String               @unique
+  name         String
+  description  String?
+  basePrice    Int
+  categoryId   String?
+  isActive     Boolean              @default(true)
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  category     Category?            @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  configFields ProductConfigField[]
+  orderItems   OrderItem[]
+}
+
+model ProductConfigField {
+  id         String                @id @default(cuid())
+  productId  String
+  name       String
+  type       String
+  isRequired Boolean               @default(false)
+  product    Product               @relation(fields: [productId], references: [id], onDelete: Cascade)
+  options    ProductConfigOption[]
+}
+
+model ProductConfigOption {
+  id            String             @id @default(cuid())
+  fieldId       String
+  value         String
+  priceModifier Int                @default(0)
+  field         ProductConfigField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+}
+
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  eventType String
+  payload   Json?
+  createdAt DateTime @default(now())
+}
+
+model LeadCapture {
+  id        String   @id @default(cuid())
+  email     String
+  source    String?
+  createdAt DateTime @default(now())
+}
+
+model SiteSettings {
+  id              String   @id @default("global")
+  primaryColor    String   @default("#5D5754")
+  accentColor     String   @default("#D9C5B2")
+  backgroundColor String   @default("#F9F8F6")
+  textColor       String   @default("#333333")
+  updatedAt       DateTime @updatedAt
+}
+
+model Page {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  content   Json     @default("[]")
+  isDraft   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

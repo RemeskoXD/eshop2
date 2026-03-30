@@ -35,16 +35,17 @@ function isBasicAuthOk(request: NextRequest): boolean {
 }
 
 export async function middleware(request: NextRequest) {
-  const canonical = parseCanonicalSiteUrl();
-  if (canonical) {
-    const decision = resolveCanonicalRedirect(request.headers.get("host"), request.nextUrl, canonical);
-    if (decision.action === "redirect") {
-      const nextUrl = request.nextUrl.clone();
-      nextUrl.hostname = decision.hostname;
-      nextUrl.protocol = decision.protocol;
-      return NextResponse.redirect(nextUrl, 308);
-    }
-  }
+  // Canonical redirect disabled for Coolify deployment
+  // const canonical = parseCanonicalSiteUrl();
+  // if (canonical) {
+  //   const decision = resolveCanonicalRedirect(request.headers.get("host"), request.nextUrl, canonical);
+  //   if (decision.action === "redirect") {
+  //     const nextUrl = request.nextUrl.clone();
+  //     nextUrl.hostname = decision.hostname;
+  //     nextUrl.protocol = decision.protocol;
+  //     return NextResponse.redirect(nextUrl, 308);
+  //   }
+  // }
 
   const path = request.nextUrl.pathname;
 
